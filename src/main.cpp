@@ -61,6 +61,8 @@ int main(){
     glClearDepth(1.0f);                         // 0 is near, 1 is far
     glEnable(GL_BLEND);  
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
 
     Scene scene;
     

@@ -74,7 +74,7 @@ void TriangleMesh::buildCube()
 	int i;
 
 	for(i=0; i<8; i+=1)
-		addVertex(0.5f * glm::vec3(vertices[3*i], vertices[3*i+1], vertices[3*i+2]));
+		addVertex(0.5f * glm::vec3(vertices[3*i], vertices[3*i+1], vertices[3*i+2]) * 0.1f);
 	for(i=0; i<12; i++)
 		addTriangle(faces[3*i], faces[3*i+1], faces[3*i+2]);
 }
