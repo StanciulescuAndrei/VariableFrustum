@@ -48,6 +48,8 @@ add_executable(VariableFrustum
         src/ShaderProgram.cpp
         src/TriangleMesh.h
         src/TriangleMesh.cpp
+        src/Renderable.h
+        src/Renderable.cpp
 		${IMGUI_PATH}/imgui.h
 		${IMGUI_PATH}/imgui.cpp
 		${IMGUI_PATH}/imconfig.h
