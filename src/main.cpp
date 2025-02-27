@@ -16,6 +16,8 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GLFW_TRUE);
+    else
+        Scene::GetInstance()->keyCallback(key);
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -63,9 +65,6 @@ int main(){
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
-
-    Scene scene;
-    
     
     /* Main program loop */
     while (!glfwWindowShouldClose(window))
@@ -73,7 +72,7 @@ int main(){
         /* Clear color and depth buffers */
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
         
-        scene.render();
+        Scene::GetInstance()->render();
         /* Swap buffers and handle GLFW events */
         glfwSwapBuffers(window);
         glfwPollEvents();

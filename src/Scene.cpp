@@ -1,6 +1,15 @@
 #include "Scene.h"
 #include <iostream>
 
+Scene* Scene::scene= nullptr;
+
+Scene * Scene::GetInstance(){
+    if(scene == nullptr){
+        scene = new Scene();
+    }
+    return scene;
+}
+
 Scene::Scene(){
     Shader vertexShader;
     vertexShader.initFromFile(VERTEX_SHADER, "../src/shaders/basic.vert");
@@ -39,23 +48,33 @@ Scene::~Scene(){
         delete mesh;
     }
     shaderProgram.free();
+    delete scene;
 }
 
 void Scene::render(){
-    float physicalWidth = 0.53f;
-    float physicalHeight = 0.3f;
-    float distanceToMonitor = 0.7f;
+    frustumTracker.refreshFrustum();
 
-    // glm::mat4 perspective = glm::perspective(60.f / 180.f * 3.1415f, float(SCREEN_WIDTH) / float(SCREEN_HEIGHT), 0.01f, 100.0f);
-    glm::mat4 perspective = glm::frustum(-physicalWidth / 2, physicalWidth / 2, -physicalHeight / 2, physicalHeight / 2, distanceToMonitor, 100.0f);
-    glm::mat4 modelView = glm::lookAt(glm::vec3(0.0f, 0.0f, -distanceToMonitor), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.f, 1.f, 0.f));
-    // modelView = glm::translate(modelView, glm::vec3(0.0f, -10.0f, 0.0f));
+    glm::mat4 trackedFrustum = frustumTracker.getFrustum();
+    glm::mat4 modelView = glm::lookAt(-frustumTracker.getEstimatedPosition(), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.f, 1.f, 0.f));
+    //glm::mat4 modelView = glm::lookAt(glm::vec3(0.0f, 0.0f, -1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.f, 1.f, 0.f));
+
 
     shaderProgram.use();
-	shaderProgram.setUniformMatrix4f("projection", perspective);
+	shaderProgram.setUniformMatrix4f("projection", trackedFrustum);
+
     for(Renderable * mesh : renderList){
         glm::mat4 localTransform =  modelView * mesh->getTransform();
         shaderProgram.setUniformMatrix4f("modelview", localTransform);
         mesh->render();
+    }
+}
+
+void Scene::keyCallback(int key)
+{
+    if(key == GLFW_KEY_A){
+        frustumTracker.movePosition(glm::vec3(-0.01f, 0.0f, 0.0f));
+    }
+    else if(key == GLFW_KEY_D){
+        frustumTracker.movePosition(glm::vec3(0.01f, 0.0f, 0.0f));
     }
 }

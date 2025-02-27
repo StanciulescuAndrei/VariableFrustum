@@ -50,6 +50,8 @@ add_executable(VariableFrustum
         src/TriangleMesh.cpp
         src/Renderable.h
         src/Renderable.cpp
+		src/FrustumTracker.h
+		src/FrustumTracker.cpp
 		${IMGUI_PATH}/imgui.h
 		${IMGUI_PATH}/imgui.cpp
 		${IMGUI_PATH}/imconfig.h
