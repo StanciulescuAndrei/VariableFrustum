@@ -17,6 +17,8 @@ set(IMGUI_PATH ../libs/imgui)
 
 set(STB_PATH ../libs/stb)
 
+add_subdirectory(../libs/dlib-19.24.7/dlib dlib_build)
+
 include_directories(${OPENGL_INCLUDE_DIRS})
 include_directories(${GLUT_INCLUDE_DIRS})
 include_directories(${GLEW_INCLUDE_DIRS})
@@ -80,6 +82,7 @@ target_link_libraries(VariableFrustum
 	${GLEW_LIBRARY}
 	Eigen3::Eigen
 	${OpenCV_LIBS}
+	dlib::dlib
 )
 
 set_property(TARGET VariableFrustum PROPERTY CXX_STANDARD 17)

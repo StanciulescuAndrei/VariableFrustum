@@ -5,8 +5,13 @@
 #include <opencv2/core.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/imgproc.hpp>
+#include <dlib/image_processing/frontal_face_detector.h>
+#include <dlib/image_processing/render_face_detections.h>
+#include <dlib/image_processing.h>
+#include <dlib/opencv.h>
 
 #include <iostream>
+#include <vector>
 
 class FrustumTracker{
 public:
@@ -28,6 +33,10 @@ private:
 
     cv::Mat frame;
     cv::VideoCapture cap;
+
+    dlib::frontal_face_detector detector;
+    dlib::shape_predictor pose_model;
+
 
     const int deviceID = 0;             // 0 = open default camera
     const int apiID = cv::CAP_ANY;      // 0 = autodetect default API

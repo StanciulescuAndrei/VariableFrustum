@@ -52,6 +52,22 @@ Scene::Scene(){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
+void Scene::drawOverlay()
+{
+    glUseProgram(0);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, cvTextureId);
+
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 1.0f); glVertex2f(-1.0f, -1.0f);
+    glTexCoord2f(1.0f, 1.0f); glVertex2f(-0.5f, -1.0f);
+    glTexCoord2f(1.0f, 0.0f); glVertex2f(-0.5f, -0.5f);
+    glTexCoord2f(0.0f, 0.0f); glVertex2f(-1.0f, -0.5f);
+    glEnd();
+
+    glDisable(GL_TEXTURE_2D);
+}
+
 Scene::~Scene(){
     for(Renderable * mesh : renderList){
         delete mesh;
@@ -81,21 +97,7 @@ void Scene::render(){
         mesh->render();
     }
 
-    // glUseProgram(0);
-    // glPushMatrix();
-    // glLoadIdentity();
-    // glEnable(GL_TEXTURE_2D);
-    // glBindTexture(GL_TEXTURE_2D, cvTextureId);
-
-    // glBegin(GL_QUADS);
-    // glTexCoord2f(0.0f, 1.0f); glVertex2f(-1.0f, -1.0f);
-    // glTexCoord2f(1.0f, 1.0f); glVertex2f(-0.5f, -1.0f);
-    // glTexCoord2f(1.0f, 0.0f); glVertex2f(-0.5f, -0.5f);
-    // glTexCoord2f(0.0f, 0.0f); glVertex2f(-1.0f, -0.5f);
-    // glEnd();
-
-    // glDisable(GL_TEXTURE_2D);
-    // glPopMatrix();
+    drawOverlay();
 
 }
 

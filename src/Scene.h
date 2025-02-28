@@ -23,6 +23,8 @@ public:
     void keyCallback(int key);
 private:
     Scene();
+    void drawOverlay();
+
     static Scene * scene;
 
     ShaderProgram shaderProgram;
