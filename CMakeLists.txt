@@ -5,6 +5,7 @@ cmake_policy(SET CMP0072 NEW)
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 find_package(GLEW REQUIRED)
+find_package(OpenCV REQUIRED)
 
 find_package (Eigen3 3.4 REQUIRED NO_MODULE)
 
@@ -19,6 +20,7 @@ set(STB_PATH ../libs/stb)
 include_directories(${OPENGL_INCLUDE_DIRS})
 include_directories(${GLUT_INCLUDE_DIRS})
 include_directories(${GLEW_INCLUDE_DIRS})
+include_directories(${OpenCV_INCLUDE_DIRS})
 
 include_directories(
 	${GLFW_INCLUDE_PATH}
@@ -77,6 +79,7 @@ target_link_libraries(VariableFrustum
 	glfw
 	${GLEW_LIBRARY}
 	Eigen3::Eigen
+	${OpenCV_LIBS}
 )
 
 set_property(TARGET VariableFrustum PROPERTY CXX_STANDARD 17)

@@ -1,4 +1,5 @@
 #include "Scene.h"
+
 #include <iostream>
 
 Scene* Scene::scene= nullptr;
@@ -34,13 +35,21 @@ Scene::Scene(){
     vertexShader.free();
 
     renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3( 0.0, 0.0, 0.0)), glm::vec3(1.0, 0.0, 0.0)));
-    renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3(-0.2, 0.0, 0.0)), glm::vec3(0.0, 0.0, 1.0)));
+    // renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3(-0.2, 0.0, 0.0)), glm::vec3(0.0, 0.0, 1.0)));
     // renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3( 3.0, -3.0, 1.0)), glm::vec3(1.0, 0.0, 0.3)));
     // renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3( 3.0,  3.0, 1.0)), glm::vec3(1.0, 0.5, 1.0)));
     // renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3(-3.0, -3.0, 5.0)), glm::vec3(0.5, 0.0, 1.0)));
     // renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3(-3.0,  3.0, 5.0)), glm::vec3(0.5, 0.5, 1.0)));
     // renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3( 3.0, -3.0, 5.0)), glm::vec3(1.0, 0.0, 0.5)));
     // renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3( 3.0,  3.0, 5.0)), glm::vec3(0.0, 1.0, 1.0)));
+
+    // OpenCV feed
+    glGenTextures(1, &cvTextureId);
+    glBindTexture(GL_TEXTURE_2D, cvTextureId);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 640, 480, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
 Scene::~Scene(){
@@ -53,6 +62,10 @@ Scene::~Scene(){
 
 void Scene::render(){
     frustumTracker.refreshFrustum();
+    cv::Mat frame = frustumTracker.getFrame();
+
+    glBindTexture(GL_TEXTURE_2D, cvTextureId);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, frame.cols, frame.rows, GL_RGB, GL_UNSIGNED_BYTE, frame.data);
 
     glm::mat4 trackedFrustum = frustumTracker.getFrustum();
     glm::mat4 modelView = glm::lookAt(-frustumTracker.getEstimatedPosition(), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.f, 1.f, 0.f));
@@ -67,6 +80,23 @@ void Scene::render(){
         shaderProgram.setUniformMatrix4f("modelview", localTransform);
         mesh->render();
     }
+
+    // glUseProgram(0);
+    // glPushMatrix();
+    // glLoadIdentity();
+    // glEnable(GL_TEXTURE_2D);
+    // glBindTexture(GL_TEXTURE_2D, cvTextureId);
+
+    // glBegin(GL_QUADS);
+    // glTexCoord2f(0.0f, 1.0f); glVertex2f(-1.0f, -1.0f);
+    // glTexCoord2f(1.0f, 1.0f); glVertex2f(-0.5f, -1.0f);
+    // glTexCoord2f(1.0f, 0.0f); glVertex2f(-0.5f, -0.5f);
+    // glTexCoord2f(0.0f, 0.0f); glVertex2f(-1.0f, -0.5f);
+    // glEnd();
+
+    // glDisable(GL_TEXTURE_2D);
+    // glPopMatrix();
+
 }
 
 void Scene::keyCallback(int key)

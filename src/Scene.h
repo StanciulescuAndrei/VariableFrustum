@@ -29,6 +29,7 @@ private:
     FrustumTracker frustumTracker;
     std::vector<Renderable *> renderList;
 
+    GLuint cvTextureId;
 };
 
 #endif
