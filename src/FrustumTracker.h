@@ -22,17 +22,19 @@ public:
     glm::mat4 getFrustum();
     glm::vec3 getEstimatedPosition();
     void movePosition(const glm::vec3 & delta);
-    cv::Mat & getFrame() {return frame;}
+    const cv::Mat & getFrame() {return frame;}
+    const glm::ivec2 & getFrameResolution() {return frame_resolution;}
 
 private:
-    const float physicalWidth = 0.53f;
-    const float physicalHeight = 0.3f;
+    const float physical_width = 0.53f;
+    const float physical_height = 0.3f;
 
-    glm::vec3 estimatedHeadPosition;
+    glm::vec3 estimated_head_position;
     glm::mat4 viewFrustum;
 
     cv::Mat frame;
     cv::VideoCapture cap;
+    glm::ivec2 frame_resolution{640, 480};
 
     dlib::frontal_face_detector detector;
     dlib::shape_predictor pose_model;

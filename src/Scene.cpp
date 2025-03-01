@@ -35,7 +35,8 @@ Scene::Scene(){
     vertexShader.free();
 
     renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3( 0.0, 0.0, 0.0)), glm::vec3(1.0, 0.0, 0.0)));
-    // renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3(-0.2, 0.0, 0.0)), glm::vec3(0.0, 0.0, 1.0)));
+    renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3(-0.2, 0.0, 0.0)), glm::vec3(0.0, 0.0, 1.0)));
+    renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3(0.2, 0.0, 0.0)), glm::vec3(0.0, 1.0, 0.0)));
     // renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3( 3.0, -3.0, 1.0)), glm::vec3(1.0, 0.0, 0.3)));
     // renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3( 3.0,  3.0, 1.0)), glm::vec3(1.0, 0.5, 1.0)));
     // renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3(-3.0, -3.0, 5.0)), glm::vec3(0.5, 0.0, 1.0)));
@@ -47,7 +48,8 @@ Scene::Scene(){
     glGenTextures(1, &cvTextureId);
     glBindTexture(GL_TEXTURE_2D, cvTextureId);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 640, 480, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
+    const glm::ivec2 & frame_resolution = frustumTracker.getFrameResolution();
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, frame_resolution.x, frame_resolution.y, 0, GL_RGB, GL_UNSIGNED_BYTE, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
