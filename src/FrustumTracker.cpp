@@ -49,16 +49,19 @@ void FrustumTracker::refreshFrustum()
         glm::vec2 eye_center_right(0.0f);
         
         // Left eye 
-        for(int i = 37; i < 43; i++){
+        for(int i = 36; i < 42; i++){
             eye_center_left += glm::vec2(landmarks.part(i).x(), landmarks.part(i).y());
         }
         eye_center_left /= 6.0f;
 
         // Right eye 
-        for(int i = 43; i < 49; i++){
+        for(int i = 42; i < 48; i++){
             eye_center_right += glm::vec2(landmarks.part(i).x(), landmarks.part(i).y());
         }
         eye_center_right /= 6.0f;
+
+        cv::circle(frame, cv::Point(eye_center_left.x, eye_center_left.y), 3, cv::Scalar(0, 255, 255));
+        cv::circle(frame, cv::Point(eye_center_right.x, eye_center_right.y), 3, cv::Scalar(0, 255, 255));
 
         position_delta = (eye_center_left + eye_center_right) / 2.0f - glm::vec2(frame_resolution) / 2.0f;
         position_delta.x /= 3200.0f;
