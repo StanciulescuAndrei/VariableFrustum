@@ -42,6 +42,13 @@ private:
 
     const int deviceID = 0;             // 0 = open default camera
     const int apiID = cv::CAP_V4L2;      // 0 = autodetect default API
+
+    // Camera intrinsics
+    cv::Mat K;
+    cv::Mat K_inv; 
+
+    // Some hardcoded parameters for size estimation
+    const float intraocular_distance = 0.065f;
 };
 
 #endif

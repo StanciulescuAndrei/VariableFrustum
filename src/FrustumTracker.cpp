@@ -15,6 +15,11 @@ FrustumTracker::FrustumTracker()
     detector = dlib::get_frontal_face_detector();
     dlib::deserialize("shape_predictor_68_face_landmarks.dat") >> pose_model;
 
+    K = (cv::Mat_<float>(3, 3) << 992.2142f, 0.0f, 640.0f, 0.0f, 1019.578f, 360.0f, 0.0f, 0.0f, 1.0f);
+    K_inv = K.inv();
+
+    std::cout<<K<<std::endl<<K_inv<<std::endl;
+
 }
 
 FrustumTracker::~FrustumTracker()
@@ -27,8 +32,6 @@ void FrustumTracker::refreshFrustum()
     if (frame.empty()) {
         std::cerr << "ERROR! blank frame grabbed\n";
     }
-
-    // std::cout << frame.cols << " "<<frame.rows <<std::endl;
 
     dlib::array2d<dlib::bgr_pixel> dlibImage;
     dlib::assign_image(dlibImage, dlib::cv_image<dlib::bgr_pixel>(frame));
@@ -65,6 +68,11 @@ void FrustumTracker::refreshFrustum()
         cv::circle(frame, cv::Point(eye_center_left.x, eye_center_left.y), 3, cv::Scalar(0, 255, 255));
         cv::circle(frame, cv::Point(eye_center_right.x, eye_center_right.y), 3, cv::Scalar(0, 255, 255));
 
+        float measured_iod = glm::length(eye_center_left - eye_center_right);
+        float head_distance = K.at<float>(0, 0) * intraocular_distance / measured_iod;
+
+        std::cout<<head_distance * 100.0f <<std::endl;
+
         position_delta = (eye_center_left + eye_center_right) / 2.0f - glm::vec2(frame_resolution) / 2.0f;
         position_delta.x /= 3200.0f;
         position_delta.y /= 2400.0f;
@@ -73,9 +81,9 @@ void FrustumTracker::refreshFrustum()
     estimated_head_position.x -= position_delta.x;
     estimated_head_position.y += position_delta.y;
 
-    cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
+    
 
-   
+    cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
 
     viewFrustum = glm::frustum(-physical_width / 2 - estimated_head_position.x,
                                 physical_width / 2 - estimated_head_position.x,
