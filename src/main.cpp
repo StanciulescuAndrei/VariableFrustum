@@ -31,12 +31,15 @@ void initGLContextAndWindow(GLFWwindow** window){
  
     if (!glfwInit())
         exit(EXIT_FAILURE);
+
+    GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(primaryMonitor);
  
+    glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
  
-    *window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Variable Frustum", NULL, NULL);
+    *window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Variable Frustum", primaryMonitor, NULL);
     if (!window)
     {
         glfwTerminate();
