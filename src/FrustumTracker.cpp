@@ -3,10 +3,10 @@
 FrustumTracker::FrustumTracker()
 {
     estimated_head_position = glm::vec3(0.0f, 0.0f, 0.7f);
+    
+    cap.open(deviceID, apiID);
     cap.set(cv::CAP_PROP_FRAME_WIDTH, frame_resolution.x);
     cap.set(cv::CAP_PROP_FRAME_HEIGHT, frame_resolution.y);
-
-    cap.open(deviceID, apiID);
 
     if (!cap.isOpened()) {
         std::cerr << "ERROR! Unable to open camera\n";
@@ -27,6 +27,8 @@ void FrustumTracker::refreshFrustum()
     if (frame.empty()) {
         std::cerr << "ERROR! blank frame grabbed\n";
     }
+
+    // std::cout << frame.cols << " "<<frame.rows <<std::endl;
 
     dlib::array2d<dlib::bgr_pixel> dlibImage;
     dlib::assign_image(dlibImage, dlib::cv_image<dlib::bgr_pixel>(frame));

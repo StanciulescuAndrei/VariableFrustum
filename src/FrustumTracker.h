@@ -34,14 +34,14 @@ private:
 
     cv::Mat frame;
     cv::VideoCapture cap;
-    glm::ivec2 frame_resolution{640, 480};
+    glm::ivec2 frame_resolution{1280, 720};
 
     dlib::frontal_face_detector detector;
     dlib::shape_predictor pose_model;
 
 
     const int deviceID = 0;             // 0 = open default camera
-    const int apiID = cv::CAP_ANY;      // 0 = autodetect default API
+    const int apiID = cv::CAP_V4L2;      // 0 = autodetect default API
 };
 
 #endif
