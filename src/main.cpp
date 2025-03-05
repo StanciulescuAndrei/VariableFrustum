@@ -32,14 +32,23 @@ void initGLContextAndWindow(GLFWwindow** window){
     if (!glfwInit())
         exit(EXIT_FAILURE);
 
-    GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
-    const GLFWvidmode* mode = glfwGetVideoMode(primaryMonitor);
+    
+    int numMonitors;
+    GLFWmonitor ** monitors = glfwGetMonitors(&numMonitors);
+    if(numMonitors == 0){
+        std::cerr << "No monitors found by glfw..." << std::endl;
+        return;
+    }
+
+    GLFWmonitor * destinationMonitor = monitors[numMonitors - 1];
+
+    const GLFWvidmode* mode = glfwGetVideoMode(destinationMonitor);
  
     glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
  
-    *window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Variable Frustum", primaryMonitor, NULL);
+    *window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Variable Frustum", destinationMonitor, NULL);
     if (!window)
     {
         glfwTerminate();

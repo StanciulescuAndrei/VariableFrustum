@@ -26,8 +26,8 @@ public:
     const glm::ivec2 & getFrameResolution() {return frame_resolution;}
 
 private:
-    const float physical_width = 0.53f;
-    const float physical_height = 0.3f;
+    const float physical_width = 0.374f;
+    const float physical_height = 0.245f;
 
     glm::vec3 estimated_head_position;
     glm::mat4 viewFrustum;
@@ -44,8 +44,8 @@ private:
     const int apiID = cv::CAP_V4L2;      // 0 = autodetect default API
 
     // Camera intrinsics
-    cv::Mat K;
-    cv::Mat K_inv; 
+    glm::mat3 K;
+    glm::mat3 K_inv; 
 
     // Some hardcoded parameters for size estimation
     const float intraocular_distance = 0.065f;

@@ -7,6 +7,7 @@ FrustumTracker::FrustumTracker()
     cap.open(deviceID, apiID);
     cap.set(cv::CAP_PROP_FRAME_WIDTH, frame_resolution.x);
     cap.set(cv::CAP_PROP_FRAME_HEIGHT, frame_resolution.y);
+    cap.set(cv::CAP_PROP_FPS, 30);
 
     if (!cap.isOpened()) {
         std::cerr << "ERROR! Unable to open camera\n";
@@ -15,10 +16,21 @@ FrustumTracker::FrustumTracker()
     detector = dlib::get_frontal_face_detector();
     dlib::deserialize("shape_predictor_68_face_landmarks.dat") >> pose_model;
 
-    K = (cv::Mat_<float>(3, 3) << 992.2142f, 0.0f, 640.0f, 0.0f, 1019.578f, 360.0f, 0.0f, 0.0f, 1.0f);
-    K_inv = K.inv();
+    K = glm::mat3(992.2142f, 0.0f, 0.0f, 0.0f, 1019.578f, 0.0f, 640.0f, 360.0f, 1.0f);
+    K_inv = glm::inverse(K);
 
-    std::cout<<K<<std::endl<<K_inv<<std::endl;
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            std::cout << K[j][i] << " ";
+        }
+        std::cout << "\n";
+    }
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            std::cout << K_inv[j][i] << " ";
+        }
+        std::cout << "\n";
+    }
 
 }
 
@@ -33,8 +45,11 @@ void FrustumTracker::refreshFrustum()
         std::cerr << "ERROR! blank frame grabbed\n";
     }
 
-    dlib::array2d<dlib::bgr_pixel> dlibImage;
-    dlib::assign_image(dlibImage, dlib::cv_image<dlib::bgr_pixel>(frame));
+    cv::Mat downsampled;
+    cv::resize(frame, downsampled, cv::Size(), 0.5f, 0.5f);
+
+    dlib::matrix<dlib::bgr_pixel> dlibImage;
+    dlib::assign_image(dlibImage, dlib::cv_image<dlib::bgr_pixel>(downsampled));
 
     std::vector<dlib::rectangle> dets = detector(dlibImage);
 
@@ -46,6 +61,7 @@ void FrustumTracker::refreshFrustum()
         uint16_t num_parts = landmarks.num_parts();
         for(int i = 0; i < num_parts; i++){
             dlib::point & feature_point = landmarks.part(i);
+            feature_point *= 2; // Account for downscaling
             cv::circle(frame, cv::Point(feature_point.x(), feature_point.y()), 1, cv::Scalar(0, 0, 255));
         }
 
@@ -69,17 +85,23 @@ void FrustumTracker::refreshFrustum()
         cv::circle(frame, cv::Point(eye_center_right.x, eye_center_right.y), 3, cv::Scalar(0, 255, 255));
 
         float measured_iod = glm::length(eye_center_left - eye_center_right);
-        float head_distance = K.at<float>(0, 0) * intraocular_distance / measured_iod;
+        float head_distance = K[0][0] * intraocular_distance / measured_iod;
 
-        std::cout<<head_distance * 100.0f <<std::endl;
+        glm::vec2 head_center = (eye_center_left + eye_center_right) / 2.0f;
 
-        position_delta = (eye_center_left + eye_center_right) / 2.0f - glm::vec2(frame_resolution) / 2.0f;
-        position_delta.x /= 3200.0f;
-        position_delta.y /= 2400.0f;
+        glm::vec3 screen_pos = glm::vec3(head_center.x, head_center.y, 1.0f);
+
+        glm::vec3 world_pos = K_inv * screen_pos * head_distance;
+
+        estimated_head_position.z = head_distance;
+        position_delta.x = world_pos.x;
+        position_delta.y = world_pos.y;
     }
 
     estimated_head_position.x -= position_delta.x;
     estimated_head_position.y += position_delta.y;
+
+    std::cout<< estimated_head_position.x << " "<< estimated_head_position.y<<" "<<estimated_head_position.z<<std::endl;
 
     
 
