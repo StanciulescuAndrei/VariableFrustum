@@ -99,7 +99,7 @@ void FrustumTracker::refreshFrustum()
     }
 
     estimated_head_position.x -= position_delta.x;
-    estimated_head_position.y += position_delta.y;
+    estimated_head_position.y -= position_delta.y;
 
     std::cout<< estimated_head_position.x << " "<< estimated_head_position.y<<" "<<estimated_head_position.z<<std::endl;
 
@@ -107,11 +107,11 @@ void FrustumTracker::refreshFrustum()
 
     cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
 
-    viewFrustum = glm::frustum(-physical_width / 2 - estimated_head_position.x,
-                                physical_width / 2 - estimated_head_position.x,
-                                -physical_height / 2 - estimated_head_position.y,
-                                physical_height / 2 - estimated_head_position.y,
-                                estimated_head_position.z, 100.0f);
+    viewFrustum = glm::frustum( 0.01f * (-physical_width / 2 - estimated_head_position.x) / estimated_head_position.z,
+                                0.01f * ( physical_width / 2 - estimated_head_position.x)  / estimated_head_position.z,
+                                0.01f * (-physical_height / 2 - estimated_head_position.y)/ estimated_head_position.z,
+                                0.01f * ( physical_height / 2 - estimated_head_position.y) / estimated_head_position.z,
+                                0.01f, 100.0f);
 }
 
 glm::mat4 FrustumTracker::getFrustum()

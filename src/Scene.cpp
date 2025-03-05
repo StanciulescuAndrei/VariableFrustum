@@ -34,9 +34,9 @@ Scene::Scene(){
     fragmentShader.free();
     vertexShader.free();
 
-    renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3( 0.0, 0.0, -1.0)), glm::vec3(1.0, 0.0, 0.0)));
-    renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3(-0.2, 0.0, -1.0)), glm::vec3(0.0, 0.0, 1.0)));
-    renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3(0.2, 0.0, -1.0)), glm::vec3(0.0, 1.0, 0.0)));
+    renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3( 0.0, 0.0, -0.1)), glm::vec3(1.0, 0.0, 0.0)));
+    renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3(-0.2, 0.0, -0.1)), glm::vec3(0.0, 0.0, 1.0)));
+    renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3(0.2, 0.0, -0.1)), glm::vec3(0.0, 1.0, 0.0)));
     // renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3( 3.0, -3.0, 1.0)), glm::vec3(1.0, 0.0, 0.3)));
     // renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3( 3.0,  3.0, 1.0)), glm::vec3(1.0, 0.5, 1.0)));
     // renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3(-3.0, -3.0, 5.0)), glm::vec3(0.5, 0.0, 1.0)));
@@ -87,8 +87,8 @@ void Scene::render(){
 
     glm::mat4 trackedFrustum = frustumTracker.getFrustum();
     // glm::mat4 modelView = glm::lookAt(-frustumTracker.getEstimatedPosition(), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.f, 1.f, 0.f));
-    // glm::mat4 modelView = glm::lookAt(glm::vec3(0.0f, 0.0f, -10.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.f, 1.f, 0.f));
-    glm::mat4 modelView = glm::mat4(1.0f);
+    glm::vec3 head_position = frustumTracker.getEstimatedPosition();
+    glm::mat4 modelView = glm::lookAt(head_position, glm::vec3(head_position.x, head_position.y, 0.0f), glm::vec3(0.f, 1.f, 0.f));
 
     shaderProgram.use();
 	shaderProgram.setUniformMatrix4f("projection", trackedFrustum);
