@@ -21,7 +21,6 @@ public:
     void refreshFrustum();
     glm::mat4 getFrustum();
     glm::vec3 getEstimatedPosition();
-    void movePosition(const glm::vec3 & delta);
     const cv::Mat & getFrame() {return frame;}
     const glm::ivec2 & getFrameResolution() {return frame_resolution;}
 
@@ -29,7 +28,7 @@ private:
     const float physical_width = 0.374f;
     const float physical_height = 0.245f;
 
-    glm::vec3 estimated_head_position;
+    glm::vec3 filtered_head_position;
     glm::mat4 viewFrustum;
 
     cv::Mat frame;
@@ -49,6 +48,8 @@ private:
 
     // Some hardcoded parameters for size estimation
     const float intraocular_distance = 0.065f;
+
+    const float iir_decay = 0.1f;
 };
 
 #endif

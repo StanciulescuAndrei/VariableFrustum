@@ -2,7 +2,7 @@
 
 FrustumTracker::FrustumTracker()
 {
-    estimated_head_position = glm::vec3(0.0f, 0.0f, 0.7f);
+    filtered_head_position = glm::vec3(0.0f, 0.0f, 0.7f);
     
     cap.open(deviceID, apiID);
     cap.set(cv::CAP_PROP_FRAME_WIDTH, frame_resolution.x);
@@ -54,7 +54,7 @@ void FrustumTracker::refreshFrustum()
     std::vector<dlib::rectangle> dets = detector(dlibImage);
 
     glm::vec2 position_delta(0.0f);
-    estimated_head_position = glm::vec3(0.0f, 0.0f, 0.7f);
+    glm::vec3 estimated_head_position(0.0f);
 
     if(dets.size() > 0){
         dlib::full_object_detection landmarks = pose_model(dlibImage, dets[0]);
@@ -96,21 +96,21 @@ void FrustumTracker::refreshFrustum()
         estimated_head_position.z = head_distance;
         position_delta.x = world_pos.x;
         position_delta.y = world_pos.y;
+        estimated_head_position.x -= position_delta.x;
+        estimated_head_position.y -= position_delta.y;
+
+        filtered_head_position = iir_decay * filtered_head_position + (1.0f - iir_decay) * estimated_head_position;
     }
-
-    estimated_head_position.x -= position_delta.x;
-    estimated_head_position.y -= position_delta.y;
-
-    std::cout<< estimated_head_position.x << " "<< estimated_head_position.y<<" "<<estimated_head_position.z<<std::endl;
 
     
 
+    // std::cout<< estimated_head_position.x << " "<< estimated_head_position.y<<" "<<estimated_head_position.z<<std::endl;
     cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
 
-    viewFrustum = glm::frustum( 0.01f * (-physical_width / 2 - estimated_head_position.x) / estimated_head_position.z,
-                                0.01f * ( physical_width / 2 - estimated_head_position.x)  / estimated_head_position.z,
-                                0.01f * (-physical_height / 2 - estimated_head_position.y)/ estimated_head_position.z,
-                                0.01f * ( physical_height / 2 - estimated_head_position.y) / estimated_head_position.z,
+    viewFrustum = glm::frustum( 0.01f * (-physical_width / 2 - filtered_head_position.x) / filtered_head_position.z,
+                                0.01f * ( physical_width / 2 - filtered_head_position.x)  / filtered_head_position.z,
+                                0.01f * (-physical_height / 2 - filtered_head_position.y)/ filtered_head_position.z,
+                                0.01f * ( physical_height / 2 - filtered_head_position.y) / filtered_head_position.z,
                                 0.01f, 100.0f);
 }
 
@@ -121,10 +121,5 @@ glm::mat4 FrustumTracker::getFrustum()
 
 glm::vec3 FrustumTracker::getEstimatedPosition()
 {
-    return estimated_head_position;
-}
-
-void FrustumTracker::movePosition(const glm::vec3 &delta)
-{
-    estimated_head_position += delta;
+    return filtered_head_position;
 }

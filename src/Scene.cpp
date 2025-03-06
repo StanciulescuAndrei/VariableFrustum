@@ -105,10 +105,10 @@ void Scene::render(){
 
 void Scene::keyCallback(int key)
 {
-    if(key == GLFW_KEY_A){
-        frustumTracker.movePosition(glm::vec3(-0.01f, 0.0f, 0.0f));
-    }
-    else if(key == GLFW_KEY_D){
-        frustumTracker.movePosition(glm::vec3(0.01f, 0.0f, 0.0f));
-    }
+    // if(key == GLFW_KEY_A){
+    //     frustumTracker.movePosition(glm::vec3(-0.01f, 0.0f, 0.0f));
+    // }
+    // else if(key == GLFW_KEY_D){
+    //     frustumTracker.movePosition(glm::vec3(0.01f, 0.0f, 0.0f));
+    // }
 }
