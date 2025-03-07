@@ -34,9 +34,27 @@ Scene::Scene(){
     fragmentShader.free();
     vertexShader.free();
 
-    renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3( 0.0, 0.0, -0.1)), glm::vec3(1.0, 0.0, 0.0)));
-    renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3(-0.2, 0.0, -0.1)), glm::vec3(0.0, 0.0, 1.0)));
-    renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3(0.2, 0.0, -0.1)), glm::vec3(0.0, 1.0, 0.0)));
+    renderList.push_back(
+        new Renderable(
+            &shaderProgram, 
+            glm::translate(glm::mat4(1.0), glm::vec3( 0.0, -0.05, -0.1)), 
+            glm::vec3(0.7, 0.7, 0.7), 
+            "../models/dragon.ply"
+        ));
+    renderList.push_back(
+        new Renderable(
+            &shaderProgram, 
+            glm::translate(glm::mat4(1.0), glm::vec3(-0.2, -0.05, -0.1)), 
+            glm::vec3(0.7, 0.7, 0.7), 
+            "../models/frog.ply"  
+        ));
+    renderList.push_back(
+        new Renderable(
+            &shaderProgram, 
+            glm::translate(glm::mat4(1.0), glm::vec3( 0.2, -0.05, -0.1)), 
+            glm::vec3(0.7, 0.7, 0.7) , 
+            "../models/moai.ply"  
+        ));
     // renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3( 3.0, -3.0, 1.0)), glm::vec3(1.0, 0.0, 0.3)));
     // renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3( 3.0,  3.0, 1.0)), glm::vec3(1.0, 0.5, 1.0)));
     // renderList.push_back(new Renderable(&shaderProgram, glm::translate(glm::mat4(1.0), glm::vec3(-3.0, -3.0, 5.0)), glm::vec3(0.5, 0.0, 1.0)));
@@ -95,6 +113,8 @@ void Scene::render(){
 
     for(Renderable * mesh : renderList){
         glm::mat4 localTransform =  modelView * mesh->getTransform();
+        glm::mat3 inverse_tranform = glm::inverse(localTransform);
+        shaderProgram.setUniformMatrix3f("normalMatrix", inverse_tranform);
         shaderProgram.setUniformMatrix4f("modelview", localTransform);
         mesh->render();
     }

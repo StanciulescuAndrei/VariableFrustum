@@ -56,6 +56,8 @@ add_executable(VariableFrustum
         src/Renderable.cpp
 		src/FrustumTracker.h
 		src/FrustumTracker.cpp
+		src/PLYReader.h
+		src/PLYReader.cpp
 		${IMGUI_PATH}/imgui.h
 		${IMGUI_PATH}/imgui.cpp
 		${IMGUI_PATH}/imconfig.h

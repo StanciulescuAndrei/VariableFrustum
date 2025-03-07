@@ -3,10 +3,11 @@
 
 #include "TriangleMesh.h"
 #include "ShaderProgram.h"
+#include "PLYReader.h"
 
 class Renderable{
 public: 
-    Renderable(ShaderProgram * _program, glm::mat4 _modelMatrix, glm::vec3 _color = glm::vec3(1.0f, 0.0f, 0.0f));
+    Renderable(ShaderProgram * _program, glm::mat4 _modelMatrix, glm::vec3 _color = glm::vec3(1.0f, 0.0f, 0.0f), std::string modelPath = std::string(""));
     ~Renderable();
     void render();
     glm::mat4 getTransform(){ return modelMatrix;};
